@@ -1,0 +1,33 @@
+.app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.button {
+    margin-left: auto;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #2563eb;
+    color: #fff;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.pagination {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.active>a {
+    background: #2563eb !important;
+    color: #fff !important;
+}

@@ -1,0 +1,20 @@
+{
+  "notes": [
+    {
+      "id": "1",
+      "title": "Shopping List",
+      "body": "Milk, eggs, bread",
+      "tag": "Shopping",
+      "createdAt": "2025-01-01T09:00:00.000Z",
+      "updatedAt": "2025-01-01T09:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "title": "Team Lunch Notes",
+      "body": "Milestones & team bonding",
+      "tag": "Work",
+      "createdAt": "2025-01-02T11:00:00.000Z",
+      "updatedAt": "2025-01-02T11:00:00.000Z"
+    }
+  ]
+}
