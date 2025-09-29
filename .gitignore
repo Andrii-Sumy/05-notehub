@@ -1,0 +1,13 @@
+# env
+.env
+.env.*.local
+
+# deps & builds
+node_modules/
+dist/
+.vite/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.log
