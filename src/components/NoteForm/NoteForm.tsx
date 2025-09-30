@@ -1,83 +1,92 @@
-import { Formik, Form, Field, ErrorMessage as FormikError } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { createNote, CreateNoteParams } from "../../services/noteService";
 import css from "./NoteForm.module.css";
-import type { Tag } from "../../types/note";
 
-export interface NoteFormProps {
-  onSubmit: (values: { title: string; body: string; tag: Tag }) => void;
+interface NoteFormProps {
   onCancel: () => void;
-  isSubmitting?: boolean;
 }
 
-const tags: Tag[] = ["Todo", "Personal", "Work", "Shopping"];
-
 const schema = Yup.object({
-  title: Yup.string().max(120, "Max 120 chars"),
-  body: Yup.string().trim().min(1, "Please enter note text").required(),
-  tag: Yup.mixed<Tag>().oneOf(tags).required(),
+  title: Yup.string().trim().min(3).max(50),
+  content: Yup.string().trim().max(500).required("Content is required"),
+  tag: Yup.mixed<Required<CreateNoteParams>["tag"]>()
+    .oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"])
+    .required("Tag is required"),
 });
 
-export default function NoteForm({ onSubmit, onCancel, isSubmitting }: NoteFormProps) {
+export default function NoteForm({ onCancel }: NoteFormProps) {
   return (
     <Formik
-      initialValues={{ title: "", body: "", tag: "Todo" as Tag }}
+      initialValues={{ title: "", content: "", tag: "Todo" as const }}
       validationSchema={schema}
-      onSubmit={(values, helpers) => {
-        onSubmit({
-          title: values.title.trim(),
-          body: values.body.trim(),
-          tag: values.tag,
-        });
-        helpers.setSubmitting(false);
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        try {
+          const payload: CreateNoteParams = {
+            title: values.title.trim() || undefined,
+            content: values.content.trim(),
+            tag: values.tag,
+          };
+          await createNote(payload);
+          resetForm();
+          onCancel();
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setSubmitting(false);
+        }
       }}
     >
-      {({ isSubmitting: formSubmitting }) => (
+      {({ isSubmitting }) => (
         <Form className={css.form}>
-          <label className={css.label}>
-            Title
-            <Field name="title" className={css.input} placeholder="(optional)" />
-            <FormikError name="title" component="div" className={css.error} />
-          </label>
+          <div className={css.formGroup}>
+            <label htmlFor="title">Title</label>
+            <Field id="title" name="title" type="text" className={css.input} />
+            <ErrorMessage name="title" component="span" className={css.error} />
+          </div>
 
-          <label className={css.label}>
-            Content
+          <div className={css.formGroup}>
+            <label htmlFor="content">Content</label>
             <Field
               as="textarea"
-              name="body"
+              id="content"
+              name="content"
               rows={8}
-              className={css.area}
-              placeholder="Write a note…"
+              className={css.textarea}
             />
-            <FormikError name="body" component="div" className={css.error} />
-          </label>
+            <ErrorMessage
+              name="content"
+              component="span"
+              className={css.error}
+            />
+          </div>
 
-          <label className={css.label}>
-            Tag
-            <Field as="select" name="tag" className={css.select}>
-              {tags.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
+          <div className={css.formGroup}>
+            <label htmlFor="tag">Tag</label>
+            <Field as="select" id="tag" name="tag" className={css.select}>
+              <option value="Todo">Todo</option>
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+              <option value="Meeting">Meeting</option>
+              <option value="Shopping">Shopping</option>
             </Field>
-            <FormikError name="tag" component="div" className={css.error} />
-          </label>
+            <ErrorMessage name="tag" component="span" className={css.error} />
+          </div>
 
           <div className={css.actions}>
             <button
               type="button"
-              className={css.secondary}
+              className={css.cancelButton}
               onClick={onCancel}
-              disabled={isSubmitting || formSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className={css.primary}
-              disabled={isSubmitting || formSubmitting}
+              className={css.submitButton}
+              disabled={isSubmitting}
             >
-              {isSubmitting || formSubmitting ? "Saving…" : "Create note"}
+              Create note
             </button>
           </div>
         </Form>
