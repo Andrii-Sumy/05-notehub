@@ -1,40 +1,29 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { createNote, CreateNoteParams } from "../../services/noteService";
 import css from "./NoteForm.module.css";
+import type { Note } from "../../types/note";
 
 interface NoteFormProps {
+  onSubmit: (data: Pick<Note, "title" | "content" | "tag">) => Promise<void> | void;
   onCancel: () => void;
 }
 
 const schema = Yup.object({
-  title: Yup.string().trim().min(3).max(50),
-  content: Yup.string().trim().max(500).required("Content is required"),
-  tag: Yup.mixed<Required<CreateNoteParams>["tag"]>()
+  title: Yup.string().min(3).max(50).required("Title is required"),
+  content: Yup.string().max(500),
+  tag: Yup.mixed<Note["tag"]>()
     .oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"])
     .required("Tag is required"),
 });
 
-export default function NoteForm({ onCancel }: NoteFormProps) {
+export default function NoteForm({ onSubmit, onCancel }: NoteFormProps) {
   return (
     <Formik
-      initialValues={{ title: "", content: "", tag: "Todo" as const }}
+      initialValues={{ title: "", content: "", tag: "Todo" as Note["tag"] }}
       validationSchema={schema}
-      onSubmit={async (values, { setSubmitting, resetForm }) => {
-        try {
-          const payload: CreateNoteParams = {
-            title: values.title.trim() || undefined,
-            content: values.content.trim(),
-            tag: values.tag,
-          };
-          await createNote(payload);
-          resetForm();
-          onCancel();
-        } catch (e) {
-          console.error(e);
-        } finally {
-          setSubmitting(false);
-        }
+      onSubmit={async (values, helpers) => {
+        await onSubmit(values);
+        helpers.setSubmitting(false);
       }}
     >
       {({ isSubmitting }) => (
@@ -47,18 +36,8 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
 
           <div className={css.formGroup}>
             <label htmlFor="content">Content</label>
-            <Field
-              as="textarea"
-              id="content"
-              name="content"
-              rows={8}
-              className={css.textarea}
-            />
-            <ErrorMessage
-              name="content"
-              component="span"
-              className={css.error}
-            />
+            <Field as="textarea" id="content" name="content" rows={8} className={css.textarea} />
+            <ErrorMessage name="content" component="span" className={css.error} />
           </div>
 
           <div className={css.formGroup}>
@@ -74,18 +53,10 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
           </div>
 
           <div className={css.actions}>
-            <button
-              type="button"
-              className={css.cancelButton}
-              onClick={onCancel}
-            >
+            <button type="button" className={css.cancelButton} onClick={onCancel}>
               Cancel
             </button>
-            <button
-              type="submit"
-              className={css.submitButton}
-              disabled={isSubmitting}
-            >
+            <button type="submit" className={css.submitButton} disabled={isSubmitting}>
               Create note
             </button>
           </div>
