@@ -41,7 +41,7 @@ export default function App() {
     placeholderData: (prev) => prev,
   });
 
-const items: Note[] = data?.data ?? [];
+const items: Note[] = data?.notes ?? [];
 const totalPages = data?.totalPages ?? 0;
 
 

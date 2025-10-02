@@ -9,19 +9,16 @@ export interface FetchNotesParams {
   search?: string;
 }
 
+
 export interface FetchNotesResponse {
   page: number;
   perPage: number;
   totalPages: number;
   totalItems: number;
-  data: Note[];
+  notes: Note[];
 }
 
-export interface CreateNoteParams {
-  title?: string;
-  content: string;
-  tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
-}
+export type CreateNotePayload = Pick<Note, "title" | "content" | "tag">;
 
 const api = axios.create({
   baseURL: "https://notehub-public.goit.study/api",
@@ -35,15 +32,13 @@ export async function fetchNotes(
   params: FetchNotesParams = {}
 ): Promise<FetchNotesResponse> {
   const { page = 1, perPage = 12, search = "" } = params;
-
   const res: AxiosResponse<FetchNotesResponse> = await api.get("/notes", {
     params: { page, perPage, search },
   });
-
   return res.data;
 }
 
-export async function createNote(payload: CreateNoteParams): Promise<Note> {
+export async function createNote(payload: CreateNotePayload): Promise<Note> {
   const res: AxiosResponse<Note> = await api.post("/notes", payload);
   return res.data;
 }
