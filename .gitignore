@@ -11,3 +11,11 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+ 
+# Windows reserved device names
+NUL
+CON
+PRN
+AUX
+COM1
+LPT1

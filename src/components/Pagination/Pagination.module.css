@@ -1,0 +1,27 @@
+.pagination {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.page,
+.prev,
+.next,
+.break {
+    list-style: none;
+}
+
+.pageLink {
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+.active .pageLink {
+    font-weight: 600;
+    outline: 1px solid #6aa0ff;
+}
+
+.disabled {
+    opacity: .4;
+    pointer-events: none;
+}

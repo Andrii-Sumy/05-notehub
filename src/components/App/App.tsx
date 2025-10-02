@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
-import ReactPaginate from "react-paginate";
 
 import css from "./App.module.css";
 
-import SearchBox from "../components/SearchBox/SearchBox";
-import NoteList from "../components/NoteList/NoteList";
-import Modal from "../components/Modal/Modal";
-import NoteForm from "../components/NoteForm/NoteForm";
+import SearchBox from "../SearchBox/SearchBox";
+import NoteList from "../NoteList/NoteList";
+import Modal from "../Modal/Modal";
+import NoteForm from "../NoteForm/NoteForm";
+import Pagination from "../Pagination/Pagination";
 
 import {
   fetchNotes,
@@ -16,9 +16,9 @@ import {
   deleteNote,
   type FetchNotesResponse,
   type CreateNotePayload,
-} from "../services/noteService";
+} from "../../services/noteService";
 
-import type { Note } from "../types/note";
+import type { Note } from "../../types/note";
 
 const PER_PAGE = 12;
 
@@ -41,8 +41,9 @@ export default function App() {
     placeholderData: (prev) => prev,
   });
 
-  const items: Note[] = data?.items ?? [];
-  const totalPages = data?.totalPages ?? 0;
+const items: Note[] = data?.data ?? [];
+const totalPages = data?.totalPages ?? 0;
+
 
   const createMutation = useMutation({
     mutationFn: (payload: CreateNotePayload) => createNote(payload),
@@ -68,16 +69,10 @@ export default function App() {
         <SearchBox value={search} onChange={setSearch} />
 
         {totalPages > 1 && (
-          <ReactPaginate
+          <Pagination
             pageCount={totalPages}
-            pageRangeDisplayed={5}
-            marginPagesDisplayed={1}
-            onPageChange={({ selected }) => setPage(selected + 1)}
             forcePage={page - 1}
-            containerClassName={css.pagination}
-            activeClassName={css.active}
-            nextLabel="→"
-            previousLabel="←"
+            onPageChange={(p) => setPage(p)}
           />
         )}
 
@@ -86,9 +81,7 @@ export default function App() {
         </button>
       </header>
 
-      {items.length > 0 && (
-        <NoteList notes={items} onDelete={handleDelete} />
-      )}
+      {items.length > 0 && <NoteList notes={items} onDelete={handleDelete} />}
 
       {isOpen && (
         <Modal onClose={() => setIsOpen(false)}>
