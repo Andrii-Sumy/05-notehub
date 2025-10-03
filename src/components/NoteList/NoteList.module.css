@@ -6,3 +6,58 @@
     gap: 24px;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
+
+
+
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    row-gap: 16px;
+}
+
+.listItem {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.title {
+    margin: 0 0 8px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.content {
+    margin: 0 0 12px;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tag {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.button {
+    cursor: pointer;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #334155;
+    color: #fff;
+}
+
+.button:hover {
+    background: #475569;
+}
